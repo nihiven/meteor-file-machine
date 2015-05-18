@@ -1,2 +1,2 @@
-# ntunes-node
+# ntunes
 Music for everyone!
