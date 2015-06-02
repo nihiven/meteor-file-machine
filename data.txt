@@ -1,0 +1,10 @@
+db.lists.insert({
+    name : '90s One Hit Wonders',
+    files : []
+});
+
+
+db.files.insert({ hash: "?", name: "Late at Night", magnetLink: "magnet:?xt=urn:btih:687e19bad9acff9306a60568468a1e6fab2ee8f7&dn=late%20at%20night.mp3", createdAt: new Date() });
+db.files.insert({ hash: "?", name: "In the Meantime", magnetLink: "magnet:?xt=urn:btih:687e19bad9acff9306a60568468a1e6fab2ee8f7&dn=late%20at%20night.mp3", createdAt: new Date() });
+db.files.insert({ hash: "?", name: "Your Woman", magnetLink: "magnet:?xt=urn:btih:687e19bad9acff9306a60568468a1e6fab2ee8f7&dn=late%20at%20night.mp3", createdAt: new Date() });
+db.files.insert({ hash: "?", name: "I Wish", magnetLink: "magnet:?xt=urn:btih:687e19bad9acff9306a60568468a1e6fab2ee8f7&dn=late%20at%20night.mp3", createdAt: new Date() });

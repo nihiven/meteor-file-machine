@@ -1,14 +1,152 @@
 <head>
-  <title>ntunes</title>
+ <title>File Machine</title>
 </head>
-
 <body>
-  <h1>Welcome to Meteor!</h1>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Mach4F</a>
+    </div>
 
-  {{> hello}}
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+
+        <!-- lists only visible if the user is logged in -->
+        {{#if currentUser}}
+         <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Lists <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             {{#each myLists}}
+              {{> listDropdown}}
+             {{/each}}
+             <li><a href="#">Favorites</a></li>
+            <li class="divider"></li>
+            <li><a href="#">+ New List</a></li>
+          </ul>
+         </li>
+        {{/if}}
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+      	<li>{{> loginButtons }}</li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<!-- list listing only shows for logged in users -->
+{{#if currentUser}} 
+ <table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+   <th>My Lists</th>
+     <th></th>
+    </tr>
+  </thead>
+  <tbody>
+   {{#each myLists}}
+    {{> myList}}
+   {{/each}}
+  </tbody>
+ </table>
+
+
+<!-- list listing only shows for logged in users -->
+ <table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+   <th>Lists</th>
+     <th></th>
+    </tr>
+  </thead>
+  <tbody>
+   {{#each notMylists}}
+    {{> list}}
+   {{/each}}
+  </tbody>
+ </table>
+
+<!-- adding a list -->
+<header>
+  <h3>Add List</h3>
+
+  <!-- add a form below the h1 -->
+  <form class="new-list">
+    <input type="text" name="listName" placeholder="Name the list..." />
+  </form>
+</header>
+{{else}}
+  <h1>Please Login</h1>
+{{/if}}
+<hr>
+
+<!-- file listing only shows for logged in users -->
+{{#if currentUser}} 
+ <table class="table table-hover table-condensed">
+  <thead>
+  	<tr>
+	 <th>File</th>
+   <th>Hash</th>
+   <th>Favorite</th>
+  	</tr>
+  </thead>
+  <tbody>
+   {{#each files}}
+    {{> file}}
+   {{/each}}
+  </tbody>
+ </table>
+
+<!-- adding a file -->
+<header>
+  <h3>Add File</h3>
+
+  <!-- add a form below the h1 -->
+  <form class="new-file">
+    <input type="file" name="fileName" placeholder="Select a file..." />
+    <input type='submit' name='upload' value='upload'>
+  </form>
+</header>
+{{/if}}
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+
+
+
+<template name="list">
+ <tr>
+  <td>{{name}}</td>
+  <td></td>
+  <td></td>
+ </tr>
 </template>
+
+<template name="myList">
+ <tr>
+  <td>{{name}}</td>
+  <td></td>
+  <td><a href="#" class="delete"><i class="fa fa-trash-o fa-lg"></i></a></td>
+ </tr>
+</template>
+
+<template name="listDropdown">
+  <li><a href="/list/{{_id}}">{{name}}</a></li>
+</template>
+
+
+<template name="file">
+ <tr>
+  <td>{{name}}</td>
+  <td><a href="magnet:{{magnetLink}}">Magnet Link</a></td>
+  <td><a href="#" class="favorite"><i class="fa {{isFavorite}} fa-lg"></i></a></td>
+ </tr>
+</template>
+
