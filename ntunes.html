@@ -1,8 +1,9 @@
+<template name="applicationLayout">
 <head>
  <title>File Machine</title>
 </head>
 <body>
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-inverse">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -12,28 +13,17 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Mach4F</a>
+      <a class="navbar-brand" href="#">
+        Mach4F
+      </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
-
-        <!-- lists only visible if the user is logged in -->
-        {{#if currentUser}}
-         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Lists <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-             {{#each myLists}}
-              {{> listDropdown}}
-             {{/each}}
-             <li><a href="#">Favorites</a></li>
-            <li class="divider"></li>
-            <li><a href="#">+ New List</a></li>
-          </ul>
-         </li>
-        {{/if}}
+        <li><a href="/">Home</a></li>
+        <li><a href="/lists">Lists</a></li>
+        <li><a href="/files">Files</a></li>
       </ul>
       <ul class="nav navbar-nav">
       	<li>{{> loginButtons }}</li>
@@ -42,13 +32,36 @@
   </div><!-- /.container-fluid -->
 </nav>
 
+<listing>
+    {{> yield}}
+</listing>
+
+</body>
+</template>
+
+
+<!-- Home Banner template -->
+<template name="home">
+  <div class="container">
+    <div class="jumbotron">
+      <h1>File Machine</h1> 
+      <p>The File Machine is a fast and easy way to share files.</p> 
+    </div>
+    <p>Works in any HTML5 compatible browser.</p> 
+    <p>Uses BitTorrent to transfer files.</p> 
+    <p>Is open source.</p>
+  </div>
+</template>
+
+
+<!-- List Display template -->
+<template name="listDisplay">
 <!-- list listing only shows for logged in users -->
-{{#if currentUser}} 
  <table class="table table-hover table-condensed">
   <thead>
     <tr>
-   <th>My Lists</th>
-     <th></th>
+      <th>My Lists</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -56,97 +69,115 @@
     {{> myList}}
    {{/each}}
   </tbody>
- </table>
-
-
-<!-- list listing only shows for logged in users -->
- <table class="table table-hover table-condensed">
   <thead>
     <tr>
-   <th>Lists</th>
-     <th></th>
+      <th>Favorite Lists</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-   {{#each notMylists}}
+   {{#each favoriteLists}}
+    {{> list}}
+   {{/each}}
+  </tbody>
+  <thead>
+    <tr>
+      <th>Lists</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+   {{#each otherLists}}
     {{> list}}
    {{/each}}
   </tbody>
  </table>
+</template>
 
+<template name="addList">
 <!-- adding a list -->
 <header>
   <h3>Add List</h3>
-
-  <!-- add a form below the h1 -->
   <form class="new-list">
     <input type="text" name="listName" placeholder="Name the list..." />
   </form>
 </header>
-{{else}}
-  <h1>Please Login</h1>
-{{/if}}
 <hr>
+</template>
 
+<template name="fileDisplay">
 <!-- file listing only shows for logged in users -->
-{{#if currentUser}} 
  <table class="table table-hover table-condensed">
   <thead>
-  	<tr>
-	 <th>File</th>
-   <th>Hash</th>
-   <th>Favorite</th>
-  	</tr>
+    <tr>
+      <th>My Files</th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
-   {{#each files}}
+   {{#each myFiles}}
+    {{> file}}
+   {{/each}}
+  </tbody>
+  <thead>
+    <tr>
+      <th>Favorite Files</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+   {{#each favoriteFiles}}
+    {{> file}}
+   {{/each}}
+  </tbody>
+  <thead>
+    <tr>
+      <th>Other Files</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+   {{#each otherFiles}}
     {{> file}}
    {{/each}}
   </tbody>
  </table>
+</template>
 
+<template name="addFile">
 <!-- adding a file -->
 <header>
   <h3>Add File</h3>
-
-  <!-- add a form below the h1 -->
   <form class="new-file">
     <input type="file" name="fileName" placeholder="Select a file..." />
     <input type='submit' name='upload' value='upload'>
   </form>
 </header>
-{{/if}}
-</body>
-
-
-
+</template>
 
 <template name="list">
  <tr>
-  <td>{{name}}</td>
-  <td></td>
-  <td></td>
+  <td>{{name}} <span class="badge">42</span></td>
+  <td><i class="fa {{isFavorite}} fa-lg favorite"></i></td>
  </tr>
 </template>
 
 <template name="myList">
  <tr>
-  <td>{{name}}</td>
-  <td></td>
+  <td>{{name}} <span class="badge">34</span></td>
   <td><a href="#" class="delete"><i class="fa fa-trash-o fa-lg"></i></a></td>
  </tr>
 </template>
 
 <template name="listDropdown">
-  <li><a href="/list/{{_id}}">{{name}}</a></li>
+  <li><a href="/lists/{{_id}}">{{name}}</a></li>
 </template>
 
 
 <template name="file">
  <tr>
   <td>{{name}}</td>
-  <td><a href="magnet:{{magnetLink}}">Magnet Link</a></td>
-  <td><a href="#" class="favorite"><i class="fa {{isFavorite}} fa-lg"></i></a></td>
+  <td><i class="fa {{isFavorite}} fa-lg favorite"></i></td>
  </tr>
 </template>
 

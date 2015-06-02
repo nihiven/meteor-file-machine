@@ -11,3 +11,4 @@ twbs:bootstrap
 accounts-password
 accounts-ui
 fortawesome:fontawesome
+iron:router
