@@ -1,4 +1,9 @@
 ///// aldeed:autoform
+/* packages
+  meteor add mongo
+  meteor add accounts-password
+  meteor add fortawesome:fontawesome
+*/
 
 //////////// Global stuff? is that right?
 Lists = new Mongo.Collection("lists");
@@ -22,25 +27,6 @@ if (Meteor.isClient) {
 
   Template.body.events({
     "submit .new-file": function (event) {
-      // This function is called when the new task form is submitted
-      var fileName = event.target.fileName.value;
-
-      // do stuff here dog
-
-      Files.insert({
-        name: fileName,
-        ownerId: Meteor.userId(),
-        createdAt: new Date() // current time
-      });
-
-      // Clear form
-      event.target.fileName.value = "";
-
-      // Prevent default form submit
-      return false;
-    },
-
-    "click .upload": function (event) {
       // This function is called when the new task form is submitted
       var fileName = event.target.fileName.value;
 
@@ -119,12 +105,17 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     
   });
+
+  // when a user is created we'll need to add some of our properties
+  // favorites: an array of the users favorite files
+  Accounts.onCreateUser(function(options, user) {
+    if (options.profile) {
+      user.profile = options.profile;
+    } else {
+      user.profile = {};
+    }
+    
+    user.profile.favorites = [];
+    return user;
+  });
 }
-
-
-/*
-schema for lists
-
-
-
-*/
