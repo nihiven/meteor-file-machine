@@ -9,6 +9,7 @@ autopublish
 insecure
 twbs:bootstrap
 accounts-password
-accounts-ui
 fortawesome:fontawesome
 iron:router
+accounts-ui
+rubaxa:sortable

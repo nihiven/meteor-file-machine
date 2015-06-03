@@ -5,6 +5,7 @@
   meteor add accounts-ui
   meteor add iron:router
   meteor add fortawesome:fontawesome
+  meteor add rubaxa:sortable
 */
 
 //////////// Global stuff? is that right?
