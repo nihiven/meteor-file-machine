@@ -8,7 +8,6 @@
   meteor add rubaxa:sortable
 */
 
-//////////// Global stuff? is that right?
 Lists = new Mongo.Collection("lists");
 Files = new Mongo.Collection("files");
 
@@ -38,27 +37,37 @@ if (Meteor.isServer) {
 //////////// client stuff
 if (Meteor.isClient) {
   /*************************
-      Routing
+      Routing (/lib/router.js)
   **************************/
   Router.configure({
     layoutTemplate: 'applicationLayout'
   });
 
+  // top level routes
   Router.route('/', function () {
-    this.render('home');
+    this.render('home', {to: 'listing'});
+    this.render('', {to: 'addForm'}); // TODO: is there a better way to do this?
   });
 
   Router.route('/lists', function () {
-    this.render('listDisplay');
+    this.render('listDisplay', {to: 'listing'});
+    this.render('addList', {to: 'addForm'});
   });
 
   Router.route('/files', function () {
-    this.render('fileDisplay');
+    this.render('fileDisplay', {to: 'listing'});
+    this.render('addFile', {to: 'addForm'});
+  });
+
+  // sub routes
+  Router.route('list', function () {
+      // get parameter via this.params
+      path: '/list/:_id'
   });
 
 
   /*************************
-      Template Helpers
+      Template Helpers (ntunes.js)
   **************************/
   Template.applicationLayout.helpers({
     myLists: function () {
@@ -68,29 +77,37 @@ if (Meteor.isClient) {
 
   Template.listDisplay.helpers({
     myLists: function () {
+      // return lists the users owns (created)
       return Lists.find({ownerId: Meteor.userId()}, {sort: {name: 1}});
     },
     favoriteLists: function () {
+      // TODO: the refernce to favoriteLists doesn't seem to work unless I store it in a variable
+      // return lists the user does not own and has marked as a favorite
       var favorites = Meteor.user().profile.favoriteLists;
       return Lists.find({$and: [{ownerId: {$ne: Meteor.userId()}}, {_id: {$in: favorites}}]}, {sort: {name: 1}});
     },
     otherLists: function () {
+      // return lists the users does not own and has not marked as a favorite
+      var owner = Meteor.userId();
       var favorites = Meteor.user().profile.favoriteLists;
-      return Lists.find({$and: [{ownerId: {$ne: Meteor.userId()}}, {_id: {$nin: favorites}}]}, {sort: {name: 1}});
+      return Lists.find({$and: [{ownerId: {$ne: owner}}, {_id: {$nin: favorites}}]}, {sort: {name: 1}});
     }
   });
 
   Template.fileDisplay.helpers({
     myFiles: function () {
+      // return files the user owns (posted)
       var owner = Meteor.userId();
       return Files.find({ownerId: owner}, {sort: {name: 1}});
     },
     favoriteFiles: function () {
+      // return files the user does not own and has marked as a favorite
       var owner = Meteor.userId();
       var favorites = Meteor.user().profile.favoriteFiles;
       return Files.find({$and: [{ownerId: {$ne: owner}}, {_id: {$in: favorites}}]}, {sort: {name: 1}});
     },
     otherFiles: function () {
+      // return files the users does not own and has not marked as a favorite
       var owner = Meteor.userId();
       var favorites = Meteor.user().profile.favoriteFiles;
       return Files.find({$and: [{ownerId: {$ne: owner}}, {_id: {$nin: favorites}}]}, {sort: {name: 1}});
@@ -99,14 +116,15 @@ if (Meteor.isClient) {
 
   Template.addList.events({
     "submit .new-list": function (event) {
+      // TODO: don't allow blank names
       // This function is called when the new task form is submitted
       var listName = event.target.listName.value;
 
-      // do stuff here dog
-
+      // insert a list with the submitting user as owner
       Lists.insert({
         name: listName,
         ownerId: Meteor.userId(),
+        files: [],
         createdAt: new Date() // current time
       });
 
@@ -123,8 +141,7 @@ if (Meteor.isClient) {
       // This function is called when the new task form is submitted
       var fileName = event.target.fileName.value;
 
-      // do stuff here dog
-
+      // insert a file with the submitting user as owner
       Files.insert({
         name: fileName,
         ownerId: Meteor.userId(),
@@ -164,23 +181,24 @@ if (Meteor.isClient) {
         // add the file id if not found
         Meteor.users.update(Meteor.userId(), {$addToSet: {"profile.favoriteLists": this._id}});  
       }
-    }
-  });
-
-  Template.myList.events({
+    },
     "click .delete": function () {
       // TODO: confirm
-      Lists.remove(this._id);
+      // delete the given list
+      if (this.ownerId == Meteor.userId()) {
+        Lists.remove(this._id);  
+      } 
     }
   });
 
+ 
   Template.file.helpers({
     "isFavorite": function () {
       // search for file in in user's favorites
       var index = Meteor.user().profile.favoriteFiles.indexOf(this._id);
 
+      // TODO: replace the info css. is there a better way to do this?
       // return a bootstrap class for row highlighting
-      // TODO: replace the info css. is this right? setting style in the js?
       return ((index > -1) ? "fa-heart" : "fa-heart-o");
     }
   });
@@ -191,10 +209,17 @@ if (Meteor.isClient) {
       // search for file in in user's favorites
       var index = Meteor.user().profile.favoriteLists.indexOf(this._id);
 
+      // TODO: replace the info css. is there a better way to do this?
       // return a bootstrap class for row highlighting
-      // TODO: replace the info css. is this right? setting style in the js?
       return ((index > -1) ? "fa-heart" : "fa-heart-o");
+    },
+    "isMyList": function () {
+      return ((this.ownerId == Meteor.userId())) ? true : false;
+    },
+    "listCount": function () {
+      return this.files.length;
     }
   });
+
 
 }

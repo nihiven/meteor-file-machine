@@ -33,12 +33,24 @@
 </nav>
 
 <listing>
-    {{> yield}}
+    {{> yield "listing"}}
 </listing>
+
+<addForm>
+    {{> yield "addForm"}}
+</addForm>
+
+<footer id="footer">
+  <hr>
+  <a href="http://nvn.io">nvn.io</a> - <a href="https://github.com/nihiven/meteor-file-machine">github</a> - <a href="http://twiter.com/nihiven">twitter</a> - <a href="mailto:jb@nvn.io">mail</a>
+</footer>
 
 </body>
 </template>
 
+
+
+<!--------------------- Individual Templates ---------------------------->
 
 <!-- Home Banner template -->
 <template name="home">
@@ -62,18 +74,18 @@
   <thead>
     <tr>
       <th>My Lists</th>
-      <th></th>
+      <th>3</th>
     </tr>
   </thead>
   <tbody>
    {{#each myLists}}
-    {{> myList}}
+    {{> list}}
    {{/each}}
   </tbody>
   <thead>
     <tr>
       <th>Favorite Lists</th>
-      <th></th>
+      <th>3</th>
     </tr>
   </thead>
   <tbody>
@@ -84,7 +96,7 @@
   <thead>
     <tr>
       <th>Lists</th>
-      <th></th>
+      <th>3</th>
     </tr>
   </thead>
   <tbody>
@@ -158,15 +170,8 @@
 
 <template name="list">
  <tr>
-  <td>{{name}} <span class="badge">42</span></td>
-  <td><i class="fa {{isFavorite}} fa-lg favorite"></i></td>
- </tr>
-</template>
-
-<template name="myList">
- <tr>
-  <td>{{name}} <span class="badge">34</span></td>
-  <td><a href="#" class="delete"><i class="fa fa-trash-o fa-lg"></i></a></td>
+  <td><a href="/list/{{_id}}">{{name}}</a> <span class="badge">{{listCount}}</span></td>
+  <td>{{#if isMyList}}<i class="fa fa-trash-o fa-lg delete"></i>{{else}}<i class="fa {{isFavorite}} fa-lg favorite"></i>{{/if}}</td>
  </tr>
 </template>
 
