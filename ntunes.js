@@ -26,7 +26,7 @@ if (Meteor.isServer) {
     } else {
       user.profile = {};
     }
-    
+    // user favorite arrays; files and lists
     user.profile.favoriteFiles = [];
     user.profile.favoriteLists = [];
     return user;
@@ -49,20 +49,25 @@ if (Meteor.isClient) {
     this.render('', {to: 'addForm'}); // TODO: is there a better way to do this?
   });
 
-  Router.route('/lists', function () {
+  Router.route('list', function () {
     this.render('listDisplay', {to: 'listing'});
     this.render('addList', {to: 'addForm'});
   });
 
-  Router.route('/files', function () {
+  Router.route('file', function () {
     this.render('fileDisplay', {to: 'listing'});
     this.render('addFile', {to: 'addForm'});
   });
 
   // sub routes
-  Router.route('list', function () {
+  Router.route('/list/:_id', function () {
       // get parameter via this.params
-      path: '/list/:_id'
+      this.render('listDetail', {
+        to: 'listing',
+        data: function() {
+          return Lists.findOne(this.params._id);
+        }
+      });
   });
 
 

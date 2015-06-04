@@ -22,8 +22,8 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="/">Home</a></li>
-        <li><a href="/lists">Lists</a></li>
-        <li><a href="/files">Files</a></li>
+        <li><a href="/list">Lists</a></li>
+        <li><a href="/file">Files</a></li>
       </ul>
       <ul class="nav navbar-nav">
       	<li>{{> loginButtons }}</li>
@@ -32,13 +32,16 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<listing>
-    {{> yield "listing"}}
-</listing>
+<div class="container">
+  <listing>
+      {{> yield "listing"}}
+  </listing>
 
-<addForm>
-    {{> yield "addForm"}}
-</addForm>
+  <addForm>
+      {{> yield "addForm"}}
+  </addForm>
+
+</div>
 
 <footer id="footer">
   <hr>
@@ -67,6 +70,22 @@
 </template>
 
 
+<template name="listDetail">
+  <table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>{{name}}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each myLists}}
+    {{> list}}
+   {{/each}}
+   </tbody>
+  </table>
+</template>
+
 <!-- List Display template -->
 <template name="listDisplay">
 <!-- list listing only shows for logged in users -->
@@ -74,7 +93,7 @@
   <thead>
     <tr>
       <th>My Lists</th>
-      <th>3</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -85,7 +104,7 @@
   <thead>
     <tr>
       <th>Favorite Lists</th>
-      <th>3</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -96,7 +115,7 @@
   <thead>
     <tr>
       <th>Lists</th>
-      <th>3</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -183,6 +202,17 @@
 <template name="file">
  <tr>
   <td>{{name}}</td>
+  <td>
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">Dropdown<span class="caret"></span></button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+      </ul>
+    </div>
+  </td>
   <td><i class="fa {{isFavorite}} fa-lg favorite"></i></td>
  </tr>
 </template>
