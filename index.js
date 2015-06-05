@@ -40,6 +40,13 @@ if (Meteor.isClient) {
   /*************************
       Template Helpers (ntunes.js)
   **************************/
+  Template.listDetail.helpers({
+    listFiles: function () {
+      console.log(this.files);
+      return Files.find({_id: {$in: this.files}});
+    }
+  });
+
   Template.listDisplay.helpers({
     myLists: function () {
       // return lists the users owns (created)
@@ -130,7 +137,7 @@ if (Meteor.isClient) {
         Meteor.users.update(Meteor.userId(), {$pull: {"profile.favoriteFiles": this._id}}, {multi: true});
       } else {
         // add the file id if not found
-        Meteor.users.update(Meteor.userId(), {$addToSet: {"profile.favoriteFiles": this._id}});  
+        Meteor.users.update(Meteor.userId(), {$addToSet: {"profile.favoriteFiles": this._id}});
       }
     }
   });
@@ -157,8 +164,20 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.file.events({
+    "click .addToList": function (event) {
+      var file = event.currentTarget.parentNode.parentNode.attributes['file'].value; // TODO: is there a better way?
+      console.log(file);
+      console.log(event);
+      Lists.update(this._id, {$addToSet: {files: file}});  
+    }
+  });
  
   Template.file.helpers({
+    myLists: function () {
+      // return lists the users owns (created)
+      return Lists.find({ownerId: Meteor.userId()}, {sort: {name: 1}});
+    },
     "isFavorite": function () {
       // search for file in in user's favorites
       var index = Meteor.user().profile.favoriteFiles.indexOf(this._id);

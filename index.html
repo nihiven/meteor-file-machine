@@ -1,3 +1,4 @@
+<!------------------------------ main application layout ------------------------------>
 <template name="applicationLayout">
 <head>
  <title>File Machine</title>
@@ -13,9 +14,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">
-        Mach4F
-      </a>
+      <a class="navbar-brand" href="#">Mach4F</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -25,14 +24,17 @@
         <li><a href="/list">Lists</a></li>
         <li><a href="/file">Files</a></li>
       </ul>
+      {{#if currentUser}}
       <ul class="nav navbar-nav">
       	<li>{{> loginButtons }}</li>
       </ul>
+      {{/if}}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 
 <div class="container">
+  {{#if currentUser}}
   <topYield>
       {{> yield "topYield"}}
   </topYield>
@@ -40,12 +42,19 @@
   <bottomYield>
       {{> yield "bottomYield"}}
   </bottomYield>
-
+  {{else}}
+    {{> home}}
+    Please sign in! <br>
+    {{> loginButtons }}
+  {{/if}}
 </div>
 
 <footer id="footer">
   <hr>
-  <a href="http://nvn.io">nvn.io</a> - <a href="https://github.com/nihiven/meteor-file-machine">github</a> - <a href="http://twiter.com/nihiven">twitter</a> - <a href="mailto:jb@nvn.io">mail</a>
+  <a href="http://nvn.io">nvn.io</a> - 
+  <a href="https://github.com/nihiven/meteor-file-machine">github</a> - 
+  <a href="http://twiter.com/nihiven">twitter</a> - 
+  <a href="mailto:jb@nvn.io">mail</a>
 </footer>
 
 </body>
@@ -53,23 +62,21 @@
 
 
 
-<!--------------------- Individual Templates ---------------------------->
-
+<!------------------------------ Individual Templates ------------------------------>
 <!-- Home Banner template -->
 <template name="home">
-  <div class="container">
-    <div class="jumbotron well">
-      <h1>File Machine</h1> 
-      <p>The File Machine is a fast and easy way to share files.</p> 
-    </div>
-    <p>It works in any HTML5 compatible browser.</p> 
-    <p>It Uses BitTorrent to transfer files.</p>
-    <p>It's totally free of charge.</p>
-    <p>It's open source.</p>
+  <div class="jumbotron well">
+    <h1>File Machine</h1> 
+    <p>The File Machine is a fast and easy way to share files.</p> 
   </div>
+  <p>It works in any HTML5 compatible browser.</p> 
+  <p>It Uses BitTorrent to transfer files.</p>
+  <p>It's totally free of charge.</p>
+  <p>It's open source.</p>
 </template>
 
 
+<!------------------------------ /list/_id/ templates ------------------------------>
 <template name="listDetail">
   <table class="table table-hover table-condensed">
   <thead>
@@ -79,20 +86,29 @@
     </tr>
   </thead>
   <tbody>
-    {{#each myLists}}
-    {{> list}}
-   {{/each}}
+    {{#each listFiles}}
+      {{> listDetailFile}}
+    {{/each}}
    </tbody>
   </table>
 </template>
 
-<!-- List Display template -->
+<template name="listDetailFile">
+  <tr>
+    <td>{{name}}</td>
+    <td></td>
+  </tr>
+</template>
+
+
+<!------------------------------ List Display template ------------------------------>
 <template name="listDisplay">
 <!-- list listing only shows for logged in users -->
- <table class="table table-hover table-condensed">
+ <table class="table table-condensed">
   <thead>
     <tr>
       <th>My Lists</th>
+      <th>Files</th>
       <th></th>
     </tr>
   </thead>
@@ -101,9 +117,13 @@
     {{> list}}
    {{/each}}
   </tbody>
+</table>
+
+<table class="table table-condensed">
   <thead>
     <tr>
       <th>Favorite Lists</th>
+      <th>Files</th>
       <th></th>
     </tr>
   </thead>
@@ -112,9 +132,13 @@
     {{> list}}
    {{/each}}
   </tbody>
+</table>
+
+<table class="table table-condensed">
   <thead>
     <tr>
       <th>Lists</th>
+      <th>Files</th>
       <th></th>
     </tr>
   </thead>
@@ -124,6 +148,20 @@
    {{/each}}
   </tbody>
  </table>
+</template>
+
+<template name="list">
+ <tr>
+  <td><a href="/list/{{_id}}">{{name}}</a></td>
+  <td>{{listCount}}</td>
+  <td>
+    {{#if isMyList}}
+      <i class="fa fa-trash-o fa-lg delete"></i>
+    {{else}}
+      <i class="fa {{isFavorite}} fa-lg favorite"></i>
+    {{/if}}
+  </td>
+ </tr>
 </template>
 
 <template name="newList">
@@ -136,9 +174,11 @@
 </header>
 </template>
 
+
+<!------------------------------ file display ------------------------------>
 <template name="fileDisplay">
 <!-- file listing only shows for logged in users -->
- <table class="table table-hover table-condensed">
+ <table class="table table-condensed">
   <thead>
     <tr>
       <th>My Files</th>
@@ -189,19 +229,6 @@
 </header>
 </template>
 
-<template name="list">
- <tr>
-  <td><a href="/list/{{_id}}">{{name}}</a> <span class="badge">{{listCount}}</span></td>
-  <td>
-    {{#if isMyList}}
-      <i class="fa fa-trash-o fa-lg delete"></i>
-    {{else}}
-      <i class="fa {{isFavorite}} fa-lg favorite"></i>
-    {{/if}}
-  </td>
- </tr>
-</template>
-
 <template name="listDropdown">
   <li><a href="/lists/{{_id}}">{{name}}</a></li>
 </template>
@@ -213,9 +240,9 @@
   <td>
     <div class="dropdown">
       <button class="btn btn-default dropdown-toggle" type="button" id="dropdownAddToList" data-toggle="dropdown" aria-expanded="true">Add to List <span class="caret"></span></button>
-      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownAddToList">
-        {{#each addToListRow}}
-          {{>addToListRow}}
+      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownAddToList" file="{{_id}}">
+        {{#each myLists}}
+          {{> addToListRow}}
         {{/each}}
       </ul>
     </div>
@@ -225,5 +252,6 @@
 </template>
 
 <template name="addToListRow">
-  <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+  <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="addToList">{{name}}</a></li>
 </template>
+
