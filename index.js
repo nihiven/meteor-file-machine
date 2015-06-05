@@ -11,8 +11,8 @@
 Lists = new Mongo.Collection("lists");
 Files = new Mongo.Collection("files");
 
-
 //////////// server stuff
+// TODO: How do I move this into another file?
 if (Meteor.isServer) {
   Meteor.startup(function () {
     
@@ -36,50 +36,10 @@ if (Meteor.isServer) {
 
 //////////// client stuff
 if (Meteor.isClient) {
-  /*************************
-      Routing (/lib/router.js)
-  **************************/
-  Router.configure({
-    layoutTemplate: 'applicationLayout'
-  });
-
-  // top level routes
-  Router.route('/', function () {
-    this.render('home', {to: 'listing'});
-    this.render('', {to: 'addForm'}); // TODO: is there a better way to do this?
-  });
-
-  Router.route('list', function () {
-    this.render('listDisplay', {to: 'listing'});
-    this.render('addList', {to: 'addForm'});
-  });
-
-  Router.route('file', function () {
-    this.render('fileDisplay', {to: 'listing'});
-    this.render('addFile', {to: 'addForm'});
-  });
-
-  // sub routes
-  Router.route('/list/:_id', function () {
-      // get parameter via this.params
-      this.render('listDetail', {
-        to: 'listing',
-        data: function() {
-          return Lists.findOne(this.params._id);
-        }
-      });
-  });
-
-
+  
   /*************************
       Template Helpers (ntunes.js)
   **************************/
-  Template.applicationLayout.helpers({
-    myLists: function () {
-      return Lists.find({ownerId: Meteor.userId()}, {sort: {name: 1}});
-    }
-  });
-
   Template.listDisplay.helpers({
     myLists: function () {
       // return lists the users owns (created)
@@ -119,7 +79,7 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.addList.events({
+  Template.newList.events({
     "submit .new-list": function (event) {
       // TODO: don't allow blank names
       // This function is called when the new task form is submitted
@@ -141,7 +101,7 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.addFile.events({
+  Template.newFile.events({
     "submit .new-file": function (event) {
       // This function is called when the new task form is submitted
       var fileName = event.target.fileName.value;
@@ -191,6 +151,7 @@ if (Meteor.isClient) {
       // TODO: confirm
       // delete the given list
       if (this.ownerId == Meteor.userId()) {
+        // TODO: remove from users' favorites
         Lists.remove(this._id);  
       } 
     }
