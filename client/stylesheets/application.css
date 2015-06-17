@@ -20,3 +20,8 @@ i.favorite:hover {
 i.delete:hover {
   color: #00AA00;
 }
+
+.sortable-handle {
+  cursor: move;
+  cursor: -webkit-grabbing;
+}

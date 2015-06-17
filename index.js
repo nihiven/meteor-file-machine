@@ -97,6 +97,7 @@ if (Meteor.isClient) {
         name: listName,
         ownerId: Meteor.userId(),
         files: [],
+        order: 0, // sortable
         createdAt: new Date() // current time
       });
 
@@ -117,6 +118,7 @@ if (Meteor.isClient) {
       Files.insert({
         name: fileName,
         ownerId: Meteor.userId(),
+        order: 0, // sortable
         createdAt: new Date() // current time
       });
 
